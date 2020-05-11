@@ -1,0 +1,4 @@
+/base/schemastaging/organization_extra/phone_number./base/schemastaging/phone_sandbox/service_location	/olympics/olympic_participating_country/athletes./olympics/olympic_athlete_affiliation/olympics	/olympics/olympic_games/sports
+/base/schemastaging/organization_extra/phone_number./base/schemastaging/phone_sandbox/service_location	/olympics/olympic_participating_country/athletes./olympics/olympic_athlete_affiliation/olympics	/user/jg/default_domain/olympic_games/sports
+/base/schemastaging/organization_extra/phone_number./base/schemastaging/phone_sandbox/service_location	/olympics/olympic_participating_country/medals_won./olympics/olympic_medal_honor/olympics	/olympics/olympic_games/sports
+/base/schemastaging/organization_extra/phone_number./base/schemastaging/phone_sandbox/service_location	/olympics/olympic_participating_country/medals_won./olympics/olympic_medal_honor/olympics	/user/jg/default_domain/olympic_games/sports
