@@ -2,6 +2,7 @@ import networkx as nx
 from tqdm import tqdm
 import collections
 import sys
+import multiprocessing
 
 
 
@@ -111,7 +112,27 @@ def rule_find(graph_path,relation_path,rules_path,relation):
     return True
 
 
-
+def multiple_extract(graph_path,relation_path,rule_path,relation):
+    rel = "/"+relation.replace("@","/")
+    G = construct_original_graph(graph_path)
+    f = open(rules_path,"w")
+    pairs = positive_pairs(relation_path)
+    rules = set()
+    for pair in tqdm(pairs):
+        if(G.has_node(pair[0]) and G.has_node(pair[1])):
+            paths = list(all_simple_paths(G, pair[0], pair[1], cutoff=4))
+            for pp in paths:
+                print(pp)
+                rl = []
+                for ii in pp[1:]:
+                    rl.append(ii[1])
+                if(tuple(rl) not in rules and tuple(rl)!=tuple([rel])):
+                    rules.add(tuple(rl))
+                    f.write("\t".join(rl))
+                    f.write("\n")
+                    f.flush()
+    f.close()
+    return True
 
 
 if __name__ =="__main__":
@@ -129,16 +150,21 @@ if __name__ =="__main__":
          "people@person@nationality",
         "film@film@language",
         ]
-    for relation in relations:
+    tasks = []
+    for relation in tqdm(relations):
         graphpath = dataPath + 'tasks/' + relation + '/' + 'graph.txt'
         relationPath = dataPath + 'tasks/' + relation + '/' + 'train_pos'
         rules_path = dataPath + 'tasks/' + relation + '/' + 'rules_inv.txt'
-        rule_find(graphpath,relationPath,rules_path,relation)
+      #  rule_find(graphpath,relationPath,rules_path,relation)
+        tasks.append((graphpath, relationPath,rules_path,relation))
 
+    num_cores = multiprocessing.cpu_count()
+    print(num_cores)
+    pool = multiprocessing.Pool(processes=num_cores - 1)
 
+    inputs = tqdm(tasks)
 
-
-
+    processed_list = pool.starmap(multiple_extract, inputs)
 
 
 
