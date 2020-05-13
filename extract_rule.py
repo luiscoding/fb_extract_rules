@@ -145,10 +145,10 @@ if __name__ =="__main__":
         "tv@tv_program@languages",
         "location@capital_of_administrative_division@capital_of.@location@administrative_division_capital_relationship@administrative_division" ,
         "organization@organization_founder@organizations_founded" ,
-       "music@artist@origin"
+        "music@artist@origin",
         "people@person@place_of_birth",
          "people@person@nationality",
-        "film@film@language",
+        "film@film@language"
         ]
     tasks = []
     for relation in tqdm(relations):
