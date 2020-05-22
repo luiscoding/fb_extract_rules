@@ -81,11 +81,11 @@ def construct_original_graph(graph_path):
     return G
 
 def positive_pairs(relation_path):
-    pairs = set()
+    pairs = list()
     with open(relation_path) as fin:
         for line in fin:
             h,t,_ = line.strip("\n").split("\t")
-            pairs.add((h,t))
+            pairs.append((h,t))
     return pairs
 
 def rule_find(graph_path,relation_path,rules_path,relation):
@@ -139,6 +139,25 @@ def multiple_extract(graph_path,relation_path,rules_path,relation):
     return True
 
 
+def extract_rule_pair(G,pair,rules_path,relationPath,relation):
+    f = open(rules_path,"a+")
+    flog = open(relationPath+"pair_processed.txt","a+")
+    rel = "/"+relation.replace("@","/")
+    if(G.has_node(pair[0]) and G.has_node(pair[1])):
+        paths = list(all_simple_paths(G, pair[0], pair[1], cutoff=4))
+        for pp in paths:
+            print(pp)
+            rl = []
+            for ii in pp[1:]:
+                rl.append(ii[1])
+            f.write("\t".join(rl))
+            f.write("\n")
+            f.flush()
+    flog.write(str(pair))
+    flog.write("\n")
+    return True
+
+
 if __name__ =="__main__":
     dataPath = "./FB15k-237/"
 
@@ -146,8 +165,8 @@ if __name__ =="__main__":
          # "sports@sports_team@sport"
         # "film@director@film",
         # "film@film@written_by",
-        "tv@tv_program@languages",
-        # "location@capital_of_administrative_division@capital_of.@location@administrative_division_capital_relationship@administrative_division" ,
+       # "tv@tv_program@languages",
+         "location@capital_of_administrative_division@capital_of.@location@administrative_division_capital_relationship@administrative_division" ,
         # "organization@organization_founder@organizations_founded" ,
         # "music@artist@origin",
         # "people@person@place_of_birth",
@@ -159,8 +178,13 @@ if __name__ =="__main__":
         graphpath = dataPath + 'tasks/' + relation + '/' + 'graph.txt'
         relationPath = dataPath + 'tasks/' + relation + '/' + 'train_pos'
         rules_path = dataPath + 'tasks/' + relation + '/' + 'rules_inv.txt'
+
+        G = construct_original_graph(graphpath)
+        pairs = positive_pairs(relationPath)
+
       #  rule_find(graphpath,relationPath,rules_path,relation)
-        tasks.append(tuple([graphpath, relationPath,rules_path,relation]))
+        for pair in tqdm(pairs):
+            tasks.append((G,pair,rules_path,relationPath,relation))
 
     num_cores = multiprocessing.cpu_count()
     print(num_cores)
@@ -168,7 +192,9 @@ if __name__ =="__main__":
 
     inputs = tqdm(tasks)
 
-    processed_list = pool.starmap(multiple_extract, inputs)
+    processed_list = pool.starmap(extract_rule_pair, inputs)
+
+
 
 
 
